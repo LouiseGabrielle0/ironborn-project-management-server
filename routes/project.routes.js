@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const { default: mongoose } = require("mongoose");
 const Project = require('../models/Project.model');
-// const Task = require('../models/Task.model');
+const Task = require('../models/Task.model');
 
 
 // Create new project
@@ -104,10 +104,14 @@ router.delete('/projects/:projectId', (req, res, next) => {
         res.status(400).json({ message: 'Specified id is not valid' });
         return;
     }
-
+    // let tasks
     Project.findByIdAndRemove(projectId)
-        .then(deteletedProject => {
-            return Task.deleteMany({ _id: { $in: deteletedProject.tasks } });
+        .then(deletedProject => { 
+            // tasks = deletedProject.tasks.length
+            console.log(deletedProject);
+        
+            // return (tasks > 0 ? Task.deleteMany({ _id: { $in: deteletedProject.tasks } }): (deletedProject))
+            return Task.deleteMany({ _id: { $in: deletedProject.tasks } });
         })
         .then(() => res.json({ message: `Project with id ${projectId} & all associated tasks were removed successfully.` }))
         .catch(err => {
